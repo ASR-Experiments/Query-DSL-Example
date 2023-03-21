@@ -1,11 +1,10 @@
 package com.asr.experiment.query.dsl.example.entity;
 
 import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
@@ -14,7 +13,6 @@ import jakarta.validation.constraints.NotNull;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -43,14 +41,6 @@ public class City extends AbstractBaseEntity {
   @Column(nullable = false, updatable = false)
   String name;
 
-  @Builder.Default
-  @ManyToMany
-  @JoinTable(name = City.CITY_FOR_STATES_TABLE,
-             joinColumns = @JoinColumn(name = "city_id"),
-             inverseJoinColumns = @JoinColumn(name = "state_id"),
-             uniqueConstraints = {
-                 @UniqueConstraint(name = "UQ_CITY_AND_STATE_COMBINATION", columnNames = { "city_id", "state_id" })
-             })
-  private Set<State> states = new LinkedHashSet<>();
-
+  @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<CityAndStateRelation> stateList = new LinkedHashSet<>();
 }

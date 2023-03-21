@@ -1,5 +1,7 @@
 package com.asr.experiment.query.dsl.example.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -31,13 +33,16 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class Country extends AbstractBaseEntity {
   @ToString.Include
-
   @Setter(AccessLevel.NONE)
   @Column(nullable = false, updatable = false)
   String name;
 
   @Builder.Default
-  @OneToMany(mappedBy = "country", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(
+      mappedBy = "country",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true)
+  @Schema(accessMode = AccessMode.READ_ONLY)
   private Set<State> states = new LinkedHashSet<>();
 
 }

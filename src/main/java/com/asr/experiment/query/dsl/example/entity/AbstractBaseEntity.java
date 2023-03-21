@@ -3,6 +3,7 @@ package com.asr.experiment.query.dsl.example.entity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,6 +24,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @SuperBuilder
 @NoArgsConstructor
@@ -31,6 +33,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 @Setter
 @MappedSuperclass
 @ToString(onlyExplicitlyIncluded = true)
+@EntityListeners(AuditingEntityListener.class)
 public class AbstractBaseEntity {
 
   public static final String COLUMN_VERSION_NAME = "version";
