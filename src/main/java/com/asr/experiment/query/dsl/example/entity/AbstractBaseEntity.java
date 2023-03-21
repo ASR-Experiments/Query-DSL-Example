@@ -1,0 +1,59 @@
+package com.asr.experiment.query.dsl.example.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Version;
+import java.util.Date;
+import java.util.UUID;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@MappedSuperclass
+@ToString(onlyExplicitlyIncluded = true)
+public class AbstractBaseEntity {
+
+  @ToString.Include
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  @Column(name = "id", nullable = false)
+  @JdbcTypeCode(SqlTypes.VARCHAR)
+  private UUID id;
+
+  public static final String COLUMN_VERSION_NAME = "version";
+
+  @Setter(AccessLevel.NONE)
+  @Version
+  @Column(name = COLUMN_VERSION_NAME)
+  private Integer version;
+
+  @Setter(AccessLevel.NONE)
+  @Temporal(TemporalType.TIMESTAMP)
+  @CreatedDate
+  @Column(nullable = false, updatable = false)
+  private Date createdDate;
+
+  @Setter(AccessLevel.NONE)
+  @Temporal(TemporalType.TIMESTAMP)
+  @LastModifiedDate
+  private Date lastModifiedDate;
+
+}
