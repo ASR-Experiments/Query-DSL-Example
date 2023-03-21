@@ -25,6 +25,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller to test basic functionality
+ */
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
@@ -36,10 +39,17 @@ public class TestController {
 
   CityRepository cityRepository;
 
+  /**
+   * API to create a state with its relations with country and city
+   * @param stateName [Mandatory] Name of the new state
+   * @param countryName [Optional] Name of the new or existing country
+   * @param cityNames [Optional] Name of the new or existing city
+   * @return Basic (not all) details of the newly created state
+   */
   @Transactional
   @PostMapping("/state")
-  ResponseEntity<Object> newState(@RequestParam(required = false) String countryName,
-                                  @RequestParam String stateName,
+  ResponseEntity<Object> newState(@RequestParam String stateName,
+                                  @RequestParam(required = false) String countryName,
                                   @RequestParam(required = false) Set<String> cityNames) {
     if (!StringUtils.hasText(stateName)) {
       return ResponseEntity.badRequest().build();
