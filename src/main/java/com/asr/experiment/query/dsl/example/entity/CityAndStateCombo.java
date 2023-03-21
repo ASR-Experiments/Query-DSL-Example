@@ -15,6 +15,7 @@ import org.hibernate.type.SqlTypes;
 public class CityAndStateCombo {
 
   public static final String STATE_COL = "state_id";
+
   public static final String CITY_COL = "city_id";
 
   @ToString.Include

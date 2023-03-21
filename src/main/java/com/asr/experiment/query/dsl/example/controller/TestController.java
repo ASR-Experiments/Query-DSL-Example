@@ -41,16 +41,16 @@ public class TestController {
 
   /**
    * API to create a state with its relations with country and city
-   * @param stateName [Mandatory] Name of the new state
+   * @param stateName   [Mandatory] Name of the new state
    * @param countryName [Optional] Name of the new or existing country
-   * @param cityNames [Optional] Name of the new or existing city
+   * @param cityNames   [Optional] Name of the new or existing city
    * @return Basic (not all) details of the newly created state
    */
   @Transactional
   @PostMapping("/state")
-  ResponseEntity<Object> newState(@RequestParam String stateName,
-                                  @RequestParam(required = false) String countryName,
-                                  @RequestParam(required = false) Set<String> cityNames) {
+  public ResponseEntity<Object> newState(@RequestParam String stateName,
+                                         @RequestParam(required = false) String countryName,
+                                         @RequestParam(required = false) Set<String> cityNames) {
     if (!StringUtils.hasText(stateName)) {
       return ResponseEntity.badRequest().build();
     }
@@ -93,7 +93,7 @@ public class TestController {
 
   @Transactional
   @DeleteMapping("/city")
-  ResponseEntity<Object> deleteCity(@RequestParam String cityName) {
+  public ResponseEntity<Object> deleteCity(@RequestParam String cityName) {
 
     Optional<City> city = cityRepository.findByName(cityName);
 
@@ -101,20 +101,16 @@ public class TestController {
       return ResponseEntity.notFound().build();
     }
 
-    City returnCity = copyCity(city.get());
+    City returnCity = this.copyCity(city.get());
 
     cityRepository.delete(city.get());
 
     return ResponseEntity.accepted().body(returnCity);
   }
 
-  private City copyCity(City city) {
-    return City.builder().name(city.getName()).id(city.getId()).build();
-  }
-
   @Transactional
   @DeleteMapping("/state")
-  ResponseEntity<Object> deleteState(@RequestParam String stateName) {
+  public ResponseEntity<Object> deleteState(@RequestParam String stateName) {
 
     Optional<State> state = stateRepository.findByName(stateName);
 
@@ -131,7 +127,7 @@ public class TestController {
 
   @Transactional
   @DeleteMapping("/country")
-  ResponseEntity<Object> deleteCountry(@RequestParam String countryName) {
+  public ResponseEntity<Object> deleteCountry(@RequestParam String countryName) {
 
     Optional<Country> country = countryRepository.findByName(countryName);
 
@@ -146,7 +142,11 @@ public class TestController {
     return ResponseEntity.accepted().body(returnState);
   }
 
-  private static State copyState(State savedState) {
+  private City copyCity(City city) {
+    return City.builder().name(city.getName()).id(city.getId()).build();
+  }
+
+  private State copyState(State savedState) {
     StateBuilder<?, ?> returnState = State.builder().name(savedState.getName()).id(savedState.getId());
     if (savedState.getCountry() != null) {
       returnState.country(
@@ -155,7 +155,8 @@ public class TestController {
     return returnState.build();
   }
 
-  private static Country copyCountry(Country savedCountry) {
+  private Country copyCountry(Country savedCountry) {
     return Country.builder().name(savedCountry.getName()).id(savedCountry.getId()).build();
   }
+
 }
