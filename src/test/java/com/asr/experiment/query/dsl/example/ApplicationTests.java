@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class ApplicationTests {
 
+	@SuppressWarnings("java:S2699")
 	@Test
 	void contextLoads() {
 	}
