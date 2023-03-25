@@ -12,6 +12,7 @@ import jakarta.persistence.UniqueConstraint;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -41,6 +42,7 @@ public class State extends AbstractBaseEntity {
       nullable = false)
   private Country country;
 
+  @Builder.Default
   @OneToMany(mappedBy = "state", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<CityAndStateRelation> cityList = new LinkedHashSet<>();
 }
