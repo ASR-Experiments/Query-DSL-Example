@@ -8,12 +8,16 @@ import com.asr.experiment.query.dsl.example.entity.State.StateBuilder;
 import com.asr.experiment.query.dsl.example.repository.CityRepository;
 import com.asr.experiment.query.dsl.example.repository.CountryRepository;
 import com.asr.experiment.query.dsl.example.repository.StateRepository;
+import com.querydsl.core.types.Predicate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +25,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -65,12 +70,9 @@ public class TestController {
 
     State newState;
     if (!CollectionUtils.isEmpty(cityNames)) {
-      Set<CityAndStateRelation> collectedCities = cityNames
-          .stream()
-          .filter(StringUtils::hasText)
-          .map(cityName -> City.builder().name(cityName).build())
-          .map(city -> CityAndStateRelation.builder().city(city).build())
-          .collect(Collectors.toSet());
+      Set<CityAndStateRelation> collectedCities = cityNames.stream().filter(StringUtils::hasText)
+                                                           .map(cityName -> City.builder().name(cityName).build()).map(
+              city -> CityAndStateRelation.builder().city(city).build()).collect(Collectors.toSet());
 
       if (!collectedCities.isEmpty()) {
         stateBuilder.cityList(collectedCities);
@@ -79,8 +81,7 @@ public class TestController {
       newState = stateBuilder.build();
       Set<CityAndStateRelation> cityList = newState.getCityList();
       if (!ObjectUtils.isEmpty(cityList)) {
-        cityList
-            .forEach(cityAndStateRelation -> cityAndStateRelation.setState(newState));
+        cityList.forEach(cityAndStateRelation -> cityAndStateRelation.setState(newState));
       }
     } else {
       newState = stateBuilder.build();
@@ -149,14 +150,23 @@ public class TestController {
   private State copyState(State savedState) {
     StateBuilder<?, ?> returnState = State.builder().name(savedState.getName()).id(savedState.getId());
     if (savedState.getCountry() != null) {
-      returnState.country(
-          copyCountry(savedState.getCountry()));
+      returnState.country(copyCountry(savedState.getCountry()));
     }
     return returnState.build();
   }
 
   private Country copyCountry(Country savedCountry) {
     return Country.builder().name(savedCountry.getName()).id(savedCountry.getId()).build();
+  }
+
+  @GetMapping("/all/country")
+  public List<Country> getCountry(@QuerydslPredicate(root = Country.class) Predicate predicate) {
+    List<Country> countries = new ArrayList<>();
+    for (Country country : countryRepository.findAll(predicate)) {
+      countries.add(copyCountry(country));
+    }
+
+    return countries;
   }
 
 }
